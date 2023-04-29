@@ -48,6 +48,13 @@ html {
   outline: none;
   cursor: pointer;
   transition: 0.2s ease-in-out;
+  &:hover {
+    background: darkgreen;
+  }
+}
+
+.keyboard__key._active {
+  background: green;
 }
 
 

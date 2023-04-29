@@ -49,6 +49,13 @@ html {
   cursor: pointer;
   transition: 0.2s ease-in-out;
 }
+.keyboard__key:hover {
+  background: darkgreen;
+}
+
+.keyboard__key._active {
+  background: green;
+}
 
 .keyboard__key_tab {
   width: 7%;

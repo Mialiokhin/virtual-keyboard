@@ -110,7 +110,37 @@ const VirtualKeyboard = {
 
     return fragment;
   },
+
+  //pressing a key on a physical keyboard highlights the key on the virtual keyboard
+  handleEvent(e) {
+    e.preventDefault();
+    let pressedBtn;
+    for (let i = 0; i < this.elements.keys.length; i++) {
+      if (this.elements.keys[i].dataset.code === e.code) {
+        pressedBtn = this.elements.keys[i];
+        break;
+      }
+    }
+    this.illuminateBtn(e, pressedBtn);
+  },
+
+  //illuminate pressed button
+  illuminateBtn(e, pressedBtn) {
+    if (e.type === "keydown") {
+      if (pressedBtn) pressedBtn.classList.add("_active");
+    } else {
+      if (pressedBtn) pressedBtn.classList.remove("_active");
+    }
+  },
 };
 window.addEventListener("DOMContentLoaded", function () {
   VirtualKeyboard.init();
 });
+document.addEventListener(
+  "keydown",
+  VirtualKeyboard.handleEvent.bind(VirtualKeyboard)
+);
+document.addEventListener(
+  "keyup",
+  VirtualKeyboard.handleEvent.bind(VirtualKeyboard)
+);
