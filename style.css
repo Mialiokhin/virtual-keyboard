@@ -1,3 +1,68 @@
+html {
+  font-size: 10px;
+}
 
+.keyboard__input {
+  display: block;
+  width: 90%;
+  height: 30rem;
+  max-height: 40rem;
+  margin: 3.5rem auto;
+  padding: 1rem;
+  font-size: 2rem;
+}
+
+.keyboard__keys {
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+  width: 100%;
+  height: 29rem;
+  text-align: center;
+  background: #888888;
+}
+
+.keyboard {
+  width: 100%;
+  max-width: 120rem;
+  margin: 3rem auto;
+  padding-top: 0.5rem;
+  background: #adb5bd;
+  user-select: none;
+}
+
+.keyboard__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: relative;
+  height: 5rem;
+  width: 7%;
+  max-width: 7rem;
+  margin: 0.3rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: #444444;
+  color: #ffffff;
+  font-size: 1.5rem;
+  outline: none;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.keyboard__key_tab {
+  width: 7%;
+  max-width: 7.8rem;
+}
+
+.keyboard__key_large {
+  width: 14%;
+  max-width: 15rem;
+}
+
+.keyboard__key_largest {
+  width: 46%;
+  max-width: 53.5rem;
+}
 
 /*# sourceMappingURL=style.css.map */
