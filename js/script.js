@@ -1,6 +1,8 @@
 import en from "./keys-en.js";
 import ru from "./keys-ru.js";
 
+let selectedLanguageMialiokhin =
+  localStorage.getItem("selectedLanguageMialiokhin") || "english";
 const exceptionsKeyCapsLock = [
   "Backquote",
   "Digit1",
@@ -76,6 +78,8 @@ const VirtualKeyboard = {
     shift: false,
     shiftLeft: false,
     shiftRight: false,
+    ctrlLeft: false,
+    altLeft: false,
   },
 
   _init() {
@@ -101,6 +105,8 @@ const VirtualKeyboard = {
   },
 
   _renderKeys() {
+    this.elements["language"] =
+      selectedLanguageMialiokhin === "english" ? en : ru;
     const fragment = document.createDocumentFragment();
 
     this.elements["language"].forEach((key) => {
@@ -239,6 +245,7 @@ const VirtualKeyboard = {
 
       case "ShiftLeft":
         if (!this.properties.shiftRight) {
+          this.properties.shift = !this.properties.shift;
           this.properties.shiftLeft = !this.properties.shiftLeft;
           this._keyShift();
           this._keyShiftToCaps();
@@ -250,6 +257,7 @@ const VirtualKeyboard = {
 
       case "ShiftRight":
         if (!this.properties.shiftLeft) {
+          this.properties.shift = !this.properties.shift;
           this.properties.shiftRight = !this.properties.shiftRight;
           this._keyShift();
           this._keyShiftToCaps();
@@ -290,6 +298,18 @@ const VirtualKeyboard = {
         this.output.focus();
         break;
 
+      case "ControlLeft":
+        this.properties.ctrlLeft = !this.properties.ctrlLeft;
+        this._changeLanguages();
+        this.output.focus();
+        break;
+
+      case "AltLeft":
+        this.properties.altLeft = !this.properties.altLeft;
+        this._changeLanguages();
+        this.output.focus();
+        break;
+
       default:
         cursorPosition += 1;
         if (pressedBtn)
@@ -300,9 +320,41 @@ const VirtualKeyboard = {
 
     this.output.setSelectionRange(cursorPosition, cursorPosition);
   },
+  //Исправить баг с исключениями в русском языке
+  _changeLanguages() {
+    if (
+      (this.properties.ctrlLeft && this.properties.altLeft) ||
+      (!this.properties.ctrlLeft && !this.properties.altLeft)
+    ) {
+      this.elements["language"] =
+        selectedLanguageMialiokhin === "english" ? ru : en;
+      selectedLanguageMialiokhin =
+        selectedLanguageMialiokhin === "english" ? "russian" : "english";
+      localStorage.setItem(
+        "selectedLanguageMialiokhin",
+        selectedLanguageMialiokhin
+      );
+      for (const key of this.elements.keys) {
+        let thisKey = this.elements["language"].find(
+          (element) => element.code === key.dataset.code
+        );
+        key.innerHTML = thisKey["normal"];
+      }
+      if (this.properties.capsLock && !this.properties.shift) {
+        this._keyCapsLock();
+      }
+      if (!this.properties.capsLock && this.properties.shift) {
+        this._keyShift();
+        this._keyShiftToCaps();
+      }
+      if (this.properties.capsLock && this.properties.shift) {
+        this._keyShift();
+        this._keyCapsLock();
+      }
+    }
+  },
 
   _keyShift() {
-    this.properties.shift = !this.properties.shift;
     for (const key of this.elements.keys) {
       if (!exceptionsKeyShift.includes(key.dataset.code)) {
         let thisKey = this.elements["language"].find(
