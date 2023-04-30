@@ -19,7 +19,7 @@ html {
   height: 29rem;
   text-align: center;
   background: #888888;
-  }
+}
 
 .keyboard {
   width: 100%;
@@ -28,7 +28,7 @@ html {
   padding-top: 0.5rem;
   background: #adb5bd;
   user-select: none;
-  }
+}
 
 .keyboard__key {
   display: inline-flex;
@@ -48,13 +48,20 @@ html {
   outline: none;
   cursor: pointer;
   transition: 0.2s ease-in-out;
+
   &:hover {
     background: darkgreen;
+  }
+
+  &:active {
+    background: green;
+    border-radius: 20%;
   }
 }
 
 .keyboard__key._active {
   background: green;
+  border-radius: 20%;
 }
 
 

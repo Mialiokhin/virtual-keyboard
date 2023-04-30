@@ -52,9 +52,14 @@ html {
 .keyboard__key:hover {
   background: darkgreen;
 }
+.keyboard__key:active {
+  background: green;
+  border-radius: 20%;
+}
 
 .keyboard__key._active {
   background: green;
+  border-radius: 20%;
 }
 
 .keyboard__key_tab {
