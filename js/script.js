@@ -1,7 +1,7 @@
 import en from "./keys-en.js";
 import ru from "./keys-ru.js";
 
-const exceptionsKey = [
+const exceptionsKeyCapsLock = [
   "Backquote",
   "Digit1",
   "Digit2",
@@ -41,6 +41,27 @@ const exceptionsKey = [
   "ArrowRight",
   "ControlRight",
 ];
+
+const exceptionsKeyShift = [
+  "Backspace",
+  "Tab",
+  "Delete",
+  "CapsLock",
+  "Enter",
+  "ShiftLeft",
+  "ArrowUp",
+  "ShiftRight",
+  "ControlLeft",
+  "MetaLeft",
+  "AltLeft",
+  "Space",
+  "AltRight",
+  "ArrowLeft",
+  "ArrowDown",
+  "ArrowRight",
+  "ControlRight",
+];
+
 const VirtualKeyboard = {
   elements: {
     main: null,
@@ -53,6 +74,8 @@ const VirtualKeyboard = {
   properties: {
     capsLock: false,
     shift: false,
+    shiftLeft: false,
+    shiftRight: false,
   },
 
   _init() {
@@ -66,7 +89,7 @@ const VirtualKeyboard = {
     this.elements.keysContainer.classList.add("keyboard__keys");
     this.elements.keysContainer.appendChild(this._renderKeys());
     this.elements.keys =
-        this.elements.keysContainer.querySelectorAll(".keyboard__key");
+      this.elements.keysContainer.querySelectorAll(".keyboard__key");
 
     //add to DOM
     this.elements.main.appendChild(this.elements.input);
@@ -83,8 +106,8 @@ const VirtualKeyboard = {
     this.elements["language"].forEach((key) => {
       const keyboardKey = document.createElement("button");
       const addTagBr =
-          ["Backspace", "Delete", "Enter", "ShiftRight"].indexOf(key["code"]) !==
-          -1;
+        ["Backspace", "Delete", "Enter", "ShiftRight"].indexOf(key["code"]) !==
+        -1;
       keyboardKey.classList.add("keyboard__key");
       keyboardKey.dataset.code = key["code"];
       keyboardKey.setAttribute("type", "button");
@@ -208,8 +231,30 @@ const VirtualKeyboard = {
         break;
 
       case "CapsLock":
+        this.properties.capsLock = !this.properties.capsLock;
         this._keyCapsLock();
         pressedBtn.classList.toggle("_hold-active");
+        this.output.focus();
+        break;
+
+      case "ShiftLeft":
+        if (!this.properties.shiftRight) {
+          this.properties.shiftLeft = !this.properties.shiftLeft;
+          this._keyShift();
+          this._keyShiftToCaps();
+          pressedBtn.classList.toggle("_hold-active");
+        }
+
+        this.output.focus();
+        break;
+
+      case "ShiftRight":
+        if (!this.properties.shiftLeft) {
+          this.properties.shiftRight = !this.properties.shiftRight;
+          this._keyShift();
+          this._keyShiftToCaps();
+          pressedBtn.classList.toggle("_hold-active");
+        }
         this.output.focus();
         break;
 
@@ -256,18 +301,59 @@ const VirtualKeyboard = {
     this.output.setSelectionRange(cursorPosition, cursorPosition);
   },
 
-  _keyCapsLock() {
-    this.properties.capsLock = !this.properties.capsLock;
+  _keyShift() {
+    this.properties.shift = !this.properties.shift;
     for (const key of this.elements.keys) {
-      if (!exceptionsKey.includes(key.dataset.code)) {
+      if (!exceptionsKeyShift.includes(key.dataset.code)) {
+        let thisKey = this.elements["language"].find(
+          (element) => element.code === key.dataset.code
+        );
+        if (this.properties.shift) {
+          key.innerHTML = thisKey["shift"];
+        } else {
+          key.innerHTML = thisKey["normal"];
+        }
+      }
+    }
+  },
+
+  _keyShiftToCaps() {
+    for (const key of this.elements.keys) {
+      if (!exceptionsKeyCapsLock.includes(key.dataset.code)) {
+        if (!this.properties.capsLock) {
+          if (this.properties.shift) {
+            key.innerHTML = key.textContent.toUpperCase();
+          } else {
+            key.innerHTML = key.textContent.toLowerCase();
+          }
+        }
         if (this.properties.capsLock) {
           if (this.properties.shift) {
             key.innerHTML = key.textContent.toLowerCase();
           } else {
             key.innerHTML = key.textContent.toUpperCase();
           }
-        } else {
-          key.innerHTML = key.textContent.toLowerCase();
+        }
+      }
+    }
+  },
+
+  _keyCapsLock() {
+    for (const key of this.elements.keys) {
+      if (!exceptionsKeyCapsLock.includes(key.dataset.code)) {
+        if (this.properties.shift) {
+          if (this.properties.capsLock) {
+            key.innerHTML = key.textContent.toLowerCase();
+          } else {
+            key.innerHTML = key.textContent.toUpperCase();
+          }
+        }
+        if (!this.properties.shift) {
+          if (this.properties.capsLock) {
+            key.innerHTML = key.textContent.toUpperCase();
+          } else {
+            key.innerHTML = key.textContent.toLowerCase();
+          }
         }
       }
     }
@@ -280,40 +366,40 @@ const VirtualKeyboard = {
     if (currentLineIndex > 0) {
       // Перемещаем курсор на строку выше
       if (
-          lines[currentLineIndex].length < lines[currentLineIndex - 1].length &&
-          currentCursorIndexInLine === lines[currentLineIndex].length
+        lines[currentLineIndex].length < lines[currentLineIndex - 1].length &&
+        currentCursorIndexInLine === lines[currentLineIndex].length
       ) {
         cursorPosition =
-            cursorPosition -
-            1 -
-            currentCursorIndexInLine -
-            (lines[currentLineIndex - 1].length - currentCursorIndexInLine);
+          cursorPosition -
+          1 -
+          currentCursorIndexInLine -
+          (lines[currentLineIndex - 1].length - currentCursorIndexInLine);
       } else if (
-          lines[currentLineIndex].length > lines[currentLineIndex - 1].length &&
-          currentCursorIndexInLine === lines[currentLineIndex].length &&
-          lines[currentLineIndex - 1].length !== 0
+        lines[currentLineIndex].length > lines[currentLineIndex - 1].length &&
+        currentCursorIndexInLine === lines[currentLineIndex].length &&
+        lines[currentLineIndex - 1].length !== 0
       ) {
         cursorPosition = cursorPosition - lines[currentLineIndex].length - 1;
       } else if (
-          currentCursorIndexInLine !== lines[currentLineIndex].length &&
-          lines[currentLineIndex - 1].length !== 0 &&
-          currentCursorIndexInLine < lines[currentLineIndex - 1].length
+        currentCursorIndexInLine !== lines[currentLineIndex].length &&
+        lines[currentLineIndex - 1].length !== 0 &&
+        currentCursorIndexInLine < lines[currentLineIndex - 1].length
       ) {
         cursorPosition =
-            cursorPosition -
-            1 -
-            currentCursorIndexInLine -
-            (lines[currentLineIndex - 1].length - currentCursorIndexInLine);
+          cursorPosition -
+          1 -
+          currentCursorIndexInLine -
+          (lines[currentLineIndex - 1].length - currentCursorIndexInLine);
       } else if (
-          currentCursorIndexInLine !== lines[currentLineIndex].length &&
-          lines[currentLineIndex - 1].length !== 0 &&
-          currentCursorIndexInLine > lines[currentLineIndex - 1].length
+        currentCursorIndexInLine !== lines[currentLineIndex].length &&
+        lines[currentLineIndex - 1].length !== 0 &&
+        currentCursorIndexInLine > lines[currentLineIndex - 1].length
       ) {
         cursorPosition = cursorPosition - 1 - currentCursorIndexInLine;
       } else if (lines[currentLineIndex - 1].length === 0) {
         cursorPosition = cursorPosition - currentCursorIndexInLine - 1;
       } else if (
-          currentCursorIndexInLine === lines[currentLineIndex - 1].length
+        currentCursorIndexInLine === lines[currentLineIndex - 1].length
       ) {
         cursorPosition = cursorPosition - currentCursorIndexInLine - 1;
       } else if (cursorPosition < 0) {
@@ -330,52 +416,52 @@ const VirtualKeyboard = {
     if (currentLineIndex < lines.length - 1) {
       // Перемещаем курсор на строку ниже
       if (
-          lines[currentLineIndex].length < lines[currentLineIndex + 1].length &&
-          currentCursorIndexInLine === lines[currentLineIndex].length
+        lines[currentLineIndex].length < lines[currentLineIndex + 1].length &&
+        currentCursorIndexInLine === lines[currentLineIndex].length
       ) {
         cursorPosition = cursorPosition + currentCursorIndexInLine + 1;
       } else if (
-          currentCursorIndexInLine === lines[currentLineIndex + 1].length
+        currentCursorIndexInLine === lines[currentLineIndex + 1].length
       ) {
         cursorPosition =
-            cursorPosition +
-            1 +
-            (lines[currentLineIndex].length - currentCursorIndexInLine) +
-            lines[currentLineIndex + 1].length;
+          cursorPosition +
+          1 +
+          (lines[currentLineIndex].length - currentCursorIndexInLine) +
+          lines[currentLineIndex + 1].length;
       } else if (
-          lines[currentLineIndex].length > lines[currentLineIndex + 1].length &&
-          currentCursorIndexInLine === lines[currentLineIndex].length &&
-          lines[currentLineIndex + 1].length !== 0
+        lines[currentLineIndex].length > lines[currentLineIndex + 1].length &&
+        currentCursorIndexInLine === lines[currentLineIndex].length &&
+        lines[currentLineIndex + 1].length !== 0
       ) {
         cursorPosition =
-            cursorPosition + lines[currentLineIndex + 1].length + 1;
+          cursorPosition + lines[currentLineIndex + 1].length + 1;
       } else if (
-          currentCursorIndexInLine !== lines[currentLineIndex].length &&
-          lines[currentLineIndex + 1].length !== 0 &&
-          currentCursorIndexInLine < lines[currentLineIndex + 1].length
+        currentCursorIndexInLine !== lines[currentLineIndex].length &&
+        lines[currentLineIndex + 1].length !== 0 &&
+        currentCursorIndexInLine < lines[currentLineIndex + 1].length
       ) {
         cursorPosition =
-            cursorPosition +
-            1 +
-            currentCursorIndexInLine +
-            (lines[currentLineIndex].length - currentCursorIndexInLine);
+          cursorPosition +
+          1 +
+          currentCursorIndexInLine +
+          (lines[currentLineIndex].length - currentCursorIndexInLine);
       } else if (
-          currentCursorIndexInLine !== lines[currentLineIndex].length &&
-          lines[currentLineIndex + 1].length !== 0 &&
-          currentCursorIndexInLine > lines[currentLineIndex + 1].length
+        currentCursorIndexInLine !== lines[currentLineIndex].length &&
+        lines[currentLineIndex + 1].length !== 0 &&
+        currentCursorIndexInLine > lines[currentLineIndex + 1].length
       ) {
         cursorPosition =
-            cursorPosition +
-            1 +
-            (lines[currentLineIndex].length - currentCursorIndexInLine) +
-            lines[currentLineIndex + 1].length;
+          cursorPosition +
+          1 +
+          (lines[currentLineIndex].length - currentCursorIndexInLine) +
+          lines[currentLineIndex + 1].length;
       } else if (lines[currentLineIndex + 1].length === 0) {
         cursorPosition =
-            cursorPosition +
-            (lines[currentLineIndex].length - currentCursorIndexInLine) +
-            1;
+          cursorPosition +
+          (lines[currentLineIndex].length - currentCursorIndexInLine) +
+          1;
       } else if (
-          currentCursorIndexInLine === lines[currentLineIndex + 1].length
+        currentCursorIndexInLine === lines[currentLineIndex + 1].length
       ) {
         cursorPosition = cursorPosition + currentCursorIndexInLine + 1;
       } else if (cursorPosition === lines.length - 1) {
@@ -404,18 +490,18 @@ const VirtualKeyboard = {
     const lineBreakPos = value.lastIndexOf("\n");
 
     return lineBreakPos === -1
-        ? cursorPosition
-        : cursorPosition - lineBreakPos - 1;
+      ? cursorPosition
+      : cursorPosition - lineBreakPos - 1;
   },
 };
 window.addEventListener("DOMContentLoaded", function () {
   VirtualKeyboard._init();
 });
 document.addEventListener(
-    "keydown",
-    VirtualKeyboard._handleEvent.bind(VirtualKeyboard)
+  "keydown",
+  VirtualKeyboard._handleEvent.bind(VirtualKeyboard)
 );
 document.addEventListener(
-    "keyup",
-    VirtualKeyboard._handleEvent.bind(VirtualKeyboard)
+  "keyup",
+  VirtualKeyboard._handleEvent.bind(VirtualKeyboard)
 );
