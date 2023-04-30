@@ -62,6 +62,11 @@ html {
   border-radius: 20%;
 }
 
+.keyboard__key._hold-active {
+  background: green;
+  border-radius: 20%;
+}
+
 .keyboard__key_tab {
   width: 7%;
   max-width: 7.8rem;
