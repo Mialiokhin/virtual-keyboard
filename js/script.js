@@ -1,68 +1,13 @@
 import en from "./keys-en.js";
 import ru from "./keys-ru.js";
+import exceptionsKeyCapsLockEnglish from "./exceptionsKeyCapsLockEnglish.js";
+import exceptionsKeyCapsLockRussian from "./exceptionsKeyCapsLockRussian.js";
+import exceptionsKeyShift from "./exceptionsKeyShift.js";
 
 let selectedLanguageMialiokhin =
   localStorage.getItem("selectedLanguageMialiokhin") || "english";
-const exceptionsKeyCapsLock = [
-  "Backquote",
-  "Digit1",
-  "Digit2",
-  "Digit3",
-  "Digit4",
-  "Digit5",
-  "Digit6",
-  "Digit7",
-  "Digit8",
-  "Digit9",
-  "Digit0",
-  "Minus",
-  "Equal",
-  "Backspace",
-  "Tab",
-  "BracketLeft",
-  "BracketRight",
-  "Backslash",
-  "Delete",
-  "CapsLock",
-  "Semicolon",
-  "Quote",
-  "Enter",
-  "ShiftLeft",
-  "Comma",
-  "Period",
-  "Slash",
-  "ArrowUp",
-  "ShiftRight",
-  "ControlLeft",
-  "MetaLeft",
-  "AltLeft",
-  "Space",
-  "AltRight",
-  "ArrowLeft",
-  "ArrowDown",
-  "ArrowRight",
-  "ControlRight",
-];
-
-const exceptionsKeyShift = [
-  "Backspace",
-  "Tab",
-  "Delete",
-  "CapsLock",
-  "Enter",
-  "ShiftLeft",
-  "ArrowUp",
-  "ShiftRight",
-  "ControlLeft",
-  "MetaLeft",
-  "AltLeft",
-  "Space",
-  "AltRight",
-  "ArrowLeft",
-  "ArrowDown",
-  "ArrowRight",
-  "ControlRight",
-];
+let exceptionsKeyCapsLock =
+  localStorage.getItem("exceptionsKeyCapsLock") || exceptionsKeyCapsLockEnglish;
 
 const VirtualKeyboard = {
   elements: {
@@ -320,7 +265,7 @@ const VirtualKeyboard = {
 
     this.output.setSelectionRange(cursorPosition, cursorPosition);
   },
-  //Исправить баг с исключениями в русском языке
+
   _changeLanguages() {
     if (
       (this.properties.ctrlLeft && this.properties.altLeft) ||
@@ -330,10 +275,15 @@ const VirtualKeyboard = {
         selectedLanguageMialiokhin === "english" ? ru : en;
       selectedLanguageMialiokhin =
         selectedLanguageMialiokhin === "english" ? "russian" : "english";
+      exceptionsKeyCapsLock =
+        exceptionsKeyCapsLock === exceptionsKeyCapsLockEnglish
+          ? exceptionsKeyCapsLockRussian
+          : exceptionsKeyCapsLockEnglish;
       localStorage.setItem(
         "selectedLanguageMialiokhin",
         selectedLanguageMialiokhin
       );
+      localStorage.setItem("exceptionsKeyCapsLock", exceptionsKeyCapsLock);
       for (const key of this.elements.keys) {
         let thisKey = this.elements["language"].find(
           (element) => element.code === key.dataset.code
