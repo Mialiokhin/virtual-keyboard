@@ -278,10 +278,7 @@ const VirtualKeyboard = {
   },
 
   changeLanguages() {
-    if (
-      (this.properties.ctrlLeft && this.properties.altLeft)
-            || (!this.properties.ctrlLeft && !this.properties.altLeft)
-    ) {
+    if (this.properties.ctrlLeft && this.properties.altLeft) {
       this.elements.language = selectedLanguageMialiokhin === 'english' ? ru : en;
       selectedLanguageMialiokhin = selectedLanguageMialiokhin === 'english' ? 'russian' : 'english';
       exceptionsKeyCapsLock = exceptionsKeyCapsLock === exceptionsKeyCapsLockEnglish
@@ -312,6 +309,8 @@ const VirtualKeyboard = {
         this.keyShift();
         this.keyCapsLock();
       }
+      this.properties.ctrlLeft = !this.properties.ctrlLeft;
+      this.properties.altLeft = !this.properties.altLeft;
     }
   },
 
