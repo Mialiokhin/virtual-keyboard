@@ -58,6 +58,7 @@ html {
   font-size: 2rem;
   cursor: pointer;
   transition: 0.2s ease-in-out;
+  box-shadow: 0 3px #999;
 }
 
 @media (min-width: 500px) {
@@ -81,17 +82,20 @@ html {
 
 .keyboard__key:active {
   background: #759242;
-  border-radius: 20%;
+  transform: translateY(4px);
+  box-shadow: 0 1px #999;
 }
 
 .keyboard__key._active {
   background: #759242;
-  border-radius: 20%;
+  transform: translateY(2px);
+  box-shadow: 0 1px #999;
 }
 
 .keyboard__key._hold-active {
   background: #759242;
-  border-radius: 20%;
+  transform: translateY(2px);
+  box-shadow: 0 1px #999;
 }
 
 .keyboard__key_tab {
